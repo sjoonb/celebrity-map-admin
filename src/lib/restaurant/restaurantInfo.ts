@@ -57,14 +57,13 @@ const sampleRestaurantInfoData: RestaurantInfo[] = [
   },
 ];
 
-export const restaurantsInfoAtom = atom(sampleRestaurantInfoData);
+export const restaurantsInfoAtom = atom<RestaurantInfo[]>([]);
 
 export const sortedRestaurantsInfoAtom =  atom((get) => {
   const restaurantsInfo = get(restaurantsInfoAtom);
 
   return restaurantsInfo.sort((a, b) => (a.channelId > b.channelId ? -1 : 1));
 })
-
 
 export const serializeRestaurantsInfoAtom = atom<
   null,

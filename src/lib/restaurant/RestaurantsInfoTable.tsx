@@ -12,18 +12,35 @@ import { confirmPromise } from '@/lib/components/modal/confrim-promise';
 import {
   RestaurantInfo,
   restaurantsInfoAtom,
+  serializeRestaurantsInfoAtom,
   sortedRestaurantsInfoAtom,
 } from '@/lib/restaurant/restaurantInfo';
 import { v4 as uuid } from 'uuid';
 import { channelIdMapping } from '@/lib/constant/channels';
 
+
 export const RestaurantTable = () => {
-  const  setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
+  const setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
   const [sortedRestaurantsInfo] = useAtom(sortedRestaurantsInfoAtom);
+  const [, dispatch] = useAtom(serializeRestaurantsInfoAtom);
 
   useEffect(() => {
-    console.log('한번만 불리길');
+    const value = localStorage.getItem('serializedRestaurantsInfo');
+    if (value) {
+      console.log(value);
+      dispatch({ type: 'deserialize', value });
+    }
   }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: 'serialize',
+      callback: (value) => {
+        // console.log(value);
+        localStorage.setItem('serializedRestaurantsInfo', value);
+      },
+    });
+  }, [sortedRestaurantsInfo]);
 
   const handleDuplicateData = useCallback((restaurantInfo: RestaurantInfo) => {
     confirmPromise('선택된 데이터를 복제합니다.', {
@@ -32,11 +49,11 @@ export const RestaurantTable = () => {
     }).then((isConfirmed) => {
       if (isConfirmed) {
         const index = sortedRestaurantsInfo.indexOf(restaurantInfo);
-        const duplicatedInfo = Object.create(restaurantInfo);
+        const duplicatedInfo = {...restaurantInfo};
         duplicatedInfo.id = uuid();
         setRestaurantsInfo((prev) => [
           ...prev.slice(0, index),
-          duplicatedInfo,
+            duplicatedInfo,
           ...prev.slice(index),
         ]);
       }
@@ -78,7 +95,11 @@ export const RestaurantTable = () => {
       noRecordsText="No data to show"
       records={sortedRestaurantsInfo}
       columns={[
-        { accessor: 'channelId', title: '채널 이름', render: (data) => <Text>{channelIdMapping.get(data.channelId)}</Text>},
+        {
+          accessor: 'channelId',
+          title: '채널 이름',
+          render: (data) => <Text>{channelIdMapping.get(data.channelId)}</Text>,
+        },
         { accessor: 'restaurantName', title: '식당 이름' },
         {
           accessor: 'naverLink',
