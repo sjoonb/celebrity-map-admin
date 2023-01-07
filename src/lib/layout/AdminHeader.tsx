@@ -3,11 +3,6 @@ import Link, { LinkProps } from 'next/link';
 import { useRouter } from 'next/router';
 import {
   HiChevronDown,
-  HiOutlineUserCircle,
-  HiOutlineMusicNote,
-  HiOutlineUserGroup,
-  HiOutlineAnnotation,
-  HiOutlineCog,
   HiOutlineLogout,
 } from 'react-icons/hi';
 import { ActionIcon, Avatar, Menu, MenuItemProps } from '@mantine/core';

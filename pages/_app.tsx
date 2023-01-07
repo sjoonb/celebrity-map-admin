@@ -6,6 +6,7 @@ import { GlobalStyle, theme } from '@/lib/theme/xstyled.theme';
 import { AdminLayout } from '@/lib/layout/AdminLayout';
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
+import { Provider as JotaiProvider } from 'jotai';
 
 export default function App({ Component, pageProps }: AppProps) {
   const firebaseConfig = {
@@ -21,13 +22,15 @@ export default function App({ Component, pageProps }: AppProps) {
   initializeApp(firebaseConfig);
 
   return (
-    <MantineProvider withNormalizeCSS>
-      <ThemeProvider theme={theme}>
-        <ModalsProvider>
-          <GlobalStyle />
-          {AdminLayout(<Component {...pageProps} />)}
-        </ModalsProvider>
-      </ThemeProvider>
-    </MantineProvider>
+    <JotaiProvider>
+      <MantineProvider withNormalizeCSS>
+        <ThemeProvider theme={theme}>
+          <ModalsProvider>
+            <GlobalStyle />
+            {AdminLayout(<Component {...pageProps} />)}
+          </ModalsProvider>
+        </ThemeProvider>
+      </MantineProvider>
+    </JotaiProvider>
   );
 }

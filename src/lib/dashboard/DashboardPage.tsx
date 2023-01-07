@@ -1,19 +1,29 @@
 import { CardBase } from '@/lib/components/atoms/CardBase';
 import { Flex } from '@/lib/components/atoms/Flex';
 import { modalPromise } from '@/lib/components/modal/modal-promise';
-import { AddRestaurantPopup } from '@/lib/dashboard/popups';
-import { RestaurantTable } from '@/lib/dashboard/RestaurantTable';
+import { RestaurantInfoPopup } from '@/lib/restaurant/RestaurantInfoPopup';
+import {
+  RestaurantInfo,
+  restaurantsInfoAtom,
+} from '@/lib/restaurant/restaurantInfo';
+import { RestaurantTable } from '@/lib/restaurant/RestaurantsInfoTable';
 import { Button } from '@mantine/core';
-import { useCallback } from 'react';
+import { useSetAtom } from 'jotai';
+import { useCallback, useEffect } from 'react';
 import { HiPlus } from 'react-icons/hi';
 
 export const DashboardPage = () => {
+  const setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
+
   const handleAddData = useCallback(() => {
-    modalPromise({
-      modalId: 'add-restaurant-data',
-      title: '식당 데이터 추가하기',
-      children: <AddRestaurantPopup />,
-    });
+    modalPromise<RestaurantInfo>(RestaurantInfoPopup, {
+      id: 'add-restaurant-data',
+      title: '식당 데이터 추가',
+    })
+      .then((value) => {
+        setRestaurantsInfo((prev) => [...prev, value]);
+      })
+      .catch((error) => {});
   }, []);
 
   return (

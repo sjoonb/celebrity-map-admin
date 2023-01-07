@@ -1,21 +1,27 @@
-import { ActionIcon, FileInputProps, TextInput } from '@mantine/core';
+import { ActionIcon, TextInput } from '@mantine/core';
 import { MdOutlineLibraryAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
 import { PropsOf } from '@emotion/react';
 import { Flex } from '@/lib/components/atoms/Flex';
 import { FlexInput } from '@/lib/components/form/FlexInput';
 import { HiMinusCircle } from 'react-icons/hi';
+import { UseFormReturnType } from '@mantine/form';
 
-interface FlexAddibleInputProps extends FileInputProps {
+interface FlexAddibleTextInputProps {
+  label: string;
   wrapperProps?: PropsOf<typeof Flex>;
   children?: React.ReactNode;
+  form: UseFormReturnType<any>;
+  fieldName: string;
 }
 
-export const FlexAddibleInput = ({
+export const FlexAddibleTextInput = ({
   label,
   wrapperProps,
   children,
-}: FlexAddibleInputProps) => {
+  form,
+  fieldName,
+}: FlexAddibleTextInputProps) => {
   const [rows, setRows] = useState([] as string[]);
 
   const handleAddRow = useCallback(() => {
@@ -34,7 +40,7 @@ export const FlexAddibleInput = ({
     <Flex flexDirection="column" gap={2}>
       <FlexInput label={label}>
         <Flex gap="20px" {...wrapperProps}>
-          <TextInput sx={{ flexGrow: 1 }}></TextInput>
+          <TextInput sx={{ flexGrow: 1 }} {...form.getInputProps(fieldName)} />
           <ActionIcon size="lg" color="primary" onClick={handleAddRow}>
             <MdOutlineLibraryAdd size={24} />
           </ActionIcon>
