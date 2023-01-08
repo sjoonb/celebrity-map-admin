@@ -17,6 +17,7 @@ import {
 } from '@/lib/restaurant/restaurantInfo';
 import { v4 as uuid } from 'uuid';
 import { channelIdMapping } from '@/lib/constant/channels';
+import { naverMapPlaceUrl } from '@/lib/constant/constant';
 
 
 export const RestaurantTable = () => {
@@ -36,7 +37,6 @@ export const RestaurantTable = () => {
     dispatch({
       type: 'serialize',
       callback: (value) => {
-        // console.log(value);
         localStorage.setItem('serializedRestaurantsInfo', value);
       },
     });
@@ -102,9 +102,9 @@ export const RestaurantTable = () => {
         },
         { accessor: 'restaurantName', title: '식당 이름' },
         {
-          accessor: 'naverLink',
+          accessor: 'naverId',
           title: '네이버 링크',
-          render: (data) => renderLinkText(data.naverLink),
+          render: (data) => renderLinkText(naverMapPlaceUrl + data.naverId),
         },
         {
           accessor: 'youtubeLink',

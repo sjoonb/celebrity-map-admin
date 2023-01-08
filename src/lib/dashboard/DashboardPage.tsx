@@ -11,6 +11,7 @@ import { Button } from '@mantine/core';
 import { useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { HiPlus } from 'react-icons/hi';
+import { confirmPromise } from '@/lib/components/modal/confrim-promise';
 
 export const DashboardPage = () => {
   const setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
@@ -26,6 +27,19 @@ export const DashboardPage = () => {
       .catch((error) => {});
   }, []);
 
+  const handleSubmitAllData = useCallback(() => {
+    confirmPromise('모든 데이터를 제출합니다.', {
+      labels: { confirm: '확인', cancel: '취소' },
+      centered: true,
+    })
+      .then((isConfirmed) => {
+        if (isConfirmed) {
+
+        }
+      })
+      .catch((error) => {});
+  }, []);
+
   return (
     <CardBase p="40px" mb="30px">
       <Flex flexDirection="column" gap="40px">
@@ -34,7 +48,7 @@ export const DashboardPage = () => {
           <Button leftIcon={<HiPlus size={20} />} onClick={handleAddData}>
             식당 데이터 추가
           </Button>
-          <Button variant="outline">제출</Button>
+          <Button variant="outline" onClick={handleSubmitAllData}>제출</Button>
         </Flex>
       </Flex>
     </CardBase>

@@ -7,7 +7,7 @@ export interface RestaurantInfo {
   videoStartMinute: number | null;
   videoStartSecond: number | null;
   menus: string[];
-  naverLink: string;
+  naverId: string;
   restaurantName: string;
   phoneNumber: string;
   latitude: string;
@@ -22,7 +22,7 @@ const sampleRestaurantInfoData: RestaurantInfo[] = [
     videoStartMinute: 10,
     videoStartSecond: 32,
     menus: ['a', 'b'],
-    naverLink: 'https://youtu.be/zrLdC7aYy64',
+    naverId: 'https://youtu.be/zrLdC7aYy64',
     restaurantName: 'sample1',
     phoneNumber: 'sample1',
     latitude: '32.3',
@@ -36,7 +36,7 @@ const sampleRestaurantInfoData: RestaurantInfo[] = [
     videoStartMinute: 10,
     videoStartSecond: 32,
     menus: ['a', 'b'],
-    naverLink: 'sample2',
+    naverId: 'sample2',
     restaurantName: 'sample2',
     phoneNumber: 'sample2',
     latitude: 'sample2',
@@ -49,7 +49,7 @@ const sampleRestaurantInfoData: RestaurantInfo[] = [
     videoStartMinute: 10,
     videoStartSecond: 32,
     menus: ['a', 'b'],
-    naverLink: 'sample3',
+    naverId: 'sample3',
     restaurantName: 'sample3',
     phoneNumber: 'sample3',
     latitude: 'sample3',
@@ -81,4 +81,3 @@ export const serializeRestaurantsInfoAtom = atom<
     set(restaurantsInfoAtom, obj.restaurantsInfo)
   }
 })
-

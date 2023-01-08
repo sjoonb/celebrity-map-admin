@@ -9,3 +9,5 @@ export const urlRegExp = RegExp(
 );
 
 export const doubleRegExp = RegExp('^(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$')
+
+export const intRegExp = RegExp('^\\d+$');

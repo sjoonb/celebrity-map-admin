@@ -3,8 +3,9 @@ import { CreatableMultiSelect } from '@/lib/components/form/CreatableMultiSelect
 import { FlexInput } from '@/lib/components/form/FlexInput';
 import { ModalChildProps } from '@/lib/components/modal/modal-promise';
 import { channelIdMapping } from '@/lib/constant/channels';
-import { urlRegExp, doubleRegExp } from '@/lib/constant/regexp';
+import { urlRegExp, doubleRegExp, intRegExp } from '@/lib/constant/regexp';
 import { RestaurantInfo as RestaurantInfo } from '@/lib/restaurant/restaurantInfo';
+import { NaverPlaceRestaurantInfoQuery } from '@/lib/urql/urqlClient';
 import {
   Button,
   NumberInput,
@@ -12,8 +13,9 @@ import {
   SelectItem,
   TextInput,
 } from '@mantine/core';
-import { isNotEmpty, matches, useForm, zodResolver } from '@mantine/form';
-import React, { useMemo } from 'react';
+import { isNotEmpty, matches, useForm } from '@mantine/form';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useQuery } from 'urql';
 import { v4 as uuid } from 'uuid';
 
 export interface RestaurantInfoPopupProps
@@ -24,7 +26,7 @@ export interface RestaurantInfoPopupProps
 export const selectChannelData: SelectItem[] = [];
 
 channelIdMapping.forEach((value: string, key: string) => {
-  selectChannelData.push({value: key, label: value});
+  selectChannelData.push({ value: key, label: value });
 });
 
 export const RestaurantInfoPopup = ({
@@ -39,7 +41,7 @@ export const RestaurantInfoPopup = ({
       videoStartMinute: restaurantInfo?.videoStartMinute ?? null,
       videoStartSecond: restaurantInfo?.videoStartSecond ?? null,
       menus: restaurantInfo?.menus ?? [],
-      naverLink: restaurantInfo?.naverLink ?? '',
+      naverId: restaurantInfo?.naverId ?? '',
       restaurantName: restaurantInfo?.restaurantName ?? '',
       phoneNumber: restaurantInfo?.phoneNumber ?? '',
       latitude: restaurantInfo?.latitude ?? '',
@@ -52,7 +54,7 @@ export const RestaurantInfoPopup = ({
       videoStartMinute: isNotEmpty(),
       videoStartSecond: isNotEmpty(),
       menus: isNotEmpty(),
-      naverLink: isNotEmpty() && matches(urlRegExp),
+      naverId: isNotEmpty() && matches(intRegExp),
       restaurantName: isNotEmpty(),
       phoneNumber: isNotEmpty(),
       latitude: isNotEmpty() && matches(doubleRegExp),
@@ -60,6 +62,39 @@ export const RestaurantInfoPopup = ({
     },
   });
 
+  const [fetchedRestaurantInfo, refetchRestaurantInfo] = useQuery({
+    query: NaverPlaceRestaurantInfoQuery,
+    variables: { id: form.values.naverId },
+    pause: true,
+  });
+
+  const handleFetchDataFromnaverId = useCallback(() => {
+    form.validateField('naverId');
+    if (form.isValid('naverId')) {
+      console.log('refetch!');
+      refetchRestaurantInfo({ requestPolicy: 'network-only' });
+    }
+  }, [form.values.naverId]);
+
+  useEffect(() => {
+    if (!fetchedRestaurantInfo.data) {
+      return;
+    }
+
+    try {
+      const data = fetchedRestaurantInfo.data.business.base;
+
+      form.setValues({
+        restaurantName: data.name,
+        phoneNumber:
+          data.virtualPhone.length !== 0 ? data.virtualPhone : data.phone,
+        latitude: data.coordinate.y.toString(),
+        longitude: data.coordinate.x.toString(),
+      });
+    } catch {
+      form.setFieldError('naverId', '해당 ID의 식당이 존재하지 않습니다.');
+    }
+  }, [fetchedRestaurantInfo.data]);
 
   return (
     <form
@@ -70,11 +105,7 @@ export const RestaurantInfoPopup = ({
       <Flex flexDirection="column" gap={4}>
         <FlexInput label="채널 이름">
           <Select
-            data = {selectChannelData}
-            // data={[
-            //   { value: 'poongja', label: '또간집' },
-            //   { value: 'sungsikyung', label: '성시경의 먹을텐데' },
-            // ]}
+            data={selectChannelData}
             {...form.getInputProps('channelId')}
           />
         </FlexInput>
@@ -105,17 +136,20 @@ export const RestaurantInfoPopup = ({
             formProps={{ form, fieldName: 'menus' }}
           />
         </FlexInput>
-        <FlexInput label="네이버 링크">
+        <FlexInput label="네이버 식당 ID">
           <Flex gap="20px">
             <TextInput
               sx={{ flexGrow: 1 }}
-              {...form.getInputProps('naverLink')}
+              {...form.getInputProps('naverId')}
             />
-            <Button variant="light" onClick={
-              () => {
-                form.validateField('naverLink');
-              }
-            }>불러오기</Button>
+            <Button
+              variant="light"
+              onClick={handleFetchDataFromnaverId}
+              loading={fetchedRestaurantInfo.fetching}
+              loaderPosition="center"
+            >
+              불러오기
+            </Button>
           </Flex>
         </FlexInput>
         <FlexInput label="식당 이름">
