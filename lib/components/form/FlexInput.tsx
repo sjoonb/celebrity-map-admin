@@ -1,4 +1,4 @@
-import { Flex } from '@/lib/components/atoms/Flex';
+import { Flex } from '../atoms/Flex';
 import { PropsOf } from '@emotion/react';
 import { x } from '@xstyled/emotion';
 

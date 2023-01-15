@@ -1,11 +1,11 @@
-import { Flex } from '@/lib/components/atoms/Flex';
-import { CreatableMultiSelect } from '@/lib/components/form/CreatableMultiSelect';
-import { FlexInput } from '@/lib/components/form/FlexInput';
-import { ModalChildProps } from '@/lib/components/modal/modal-promise';
-import { channelIdMapping } from '@/lib/constant/channels';
-import { urlRegExp, doubleRegExp, intRegExp } from '@/lib/constant/regexp';
-import { RestaurantInfo as RestaurantInfo } from '@/lib/restaurant/restaurantInfo';
-import { NaverPlaceRestaurantInfoQuery } from '@/lib/urql/urqlClient';
+import { Flex } from '../components/atoms/Flex';
+import { CreatableMultiSelect } from '../components/form/CreatableMultiSelect';
+import { FlexInput } from '../components/form/FlexInput';
+import { ModalChildProps } from '../components/modal/modal-promise';
+import { channelIdMapping } from '../constant/channels';
+import { urlRegExp, doubleRegExp, intRegExp } from '../constant/regexp';
+import { RestaurantInfo as RestaurantInfo } from './restaurantInfo';
+import { NaverPlaceRestaurantInfoQuery } from '../urql/urqlClient';
 import {
   Button,
   NumberInput,

@@ -5,41 +5,33 @@ import { MdEdit } from 'react-icons/md';
 import { AiFillCopy } from 'react-icons/ai';
 import { x } from '@xstyled/emotion';
 import { MouseEvent, useCallback, useEffect } from 'react';
-import { modalPromise } from '@/lib/components/modal/modal-promise';
-import { RestaurantInfoPopup } from '@/lib/restaurant/RestaurantInfoPopup';
+import { modalPromise } from '../components/modal/modal-promise';
+import { RestaurantInfoPopup } from './RestaurantInfoPopup';
 import { useAtom, useSetAtom } from 'jotai';
-import { confirmPromise } from '@/lib/components/modal/confrim-promise';
+import { confirmPromise } from '../components/modal/confrim-promise';
 import {
   RestaurantInfo,
   restaurantsInfoAtom,
-  serializeRestaurantsInfoAtom,
+  restaurantsInfoReducer,
   sortedRestaurantsInfoAtom,
-} from '@/lib/restaurant/restaurantInfo';
-import { v4 as uuid } from 'uuid';
-import { channelIdMapping } from '@/lib/constant/channels';
-import { naverMapPlaceUrl } from '@/lib/constant/constant';
-
+} from './restaurantInfo';
+import { channelIdMapping } from '../constant/channels';
+import { naverMapPlaceUrl } from '../constant/constant';
 
 export const RestaurantTable = () => {
   const setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
   const [sortedRestaurantsInfo] = useAtom(sortedRestaurantsInfoAtom);
-  const [, dispatch] = useAtom(serializeRestaurantsInfoAtom);
+  const dispatch = useSetAtom(restaurantsInfoReducer);
 
   useEffect(() => {
     const value = localStorage.getItem('serializedRestaurantsInfo');
     if (value) {
-      console.log(value);
-      dispatch({ type: 'deserialize', value });
+      dispatch({ type: 'deserialize' });
     }
   }, []);
 
   useEffect(() => {
-    dispatch({
-      type: 'serialize',
-      callback: (value) => {
-        localStorage.setItem('serializedRestaurantsInfo', value);
-      },
-    });
+    dispatch({ type: 'serialize' });
   }, [sortedRestaurantsInfo]);
 
   const handleDuplicateData = useCallback((restaurantInfo: RestaurantInfo) => {
@@ -49,26 +41,18 @@ export const RestaurantTable = () => {
     }).then((isConfirmed) => {
       if (isConfirmed) {
         const index = sortedRestaurantsInfo.indexOf(restaurantInfo);
-        const duplicatedInfo = {...restaurantInfo};
-        duplicatedInfo.id = uuid();
-        setRestaurantsInfo((prev) => [
-          ...prev.slice(0, index),
-            duplicatedInfo,
-          ...prev.slice(index),
-        ]);
+        dispatch({ type: 'duplicate', restaurantInfo, index });
       }
     });
   }, []);
 
-  const handleDeleteData = useCallback((restaurantInfo: RestaurantInfo) => {
+  const handleRemoveData = useCallback((restaurantInfo: RestaurantInfo) => {
     confirmPromise('선택된 데이터를 삭제합니다.', {
       labels: { confirm: '확인', cancel: '취소' },
       centered: true,
     }).then((isConfirmed) => {
       if (isConfirmed) {
-        setRestaurantsInfo((prev) =>
-          prev.filter((info) => info !== restaurantInfo)
-        );
+        dispatch({ type: 'remove', restaurantInfo });
       }
     });
   }, []);
@@ -139,7 +123,7 @@ export const RestaurantTable = () => {
                 color="red"
                 onClick={(e: MouseEvent) => {
                   e.stopPropagation();
-                  handleDeleteData(data);
+                  handleRemoveData(data);
                 }}
               >
                 <HiTrash size={16} />

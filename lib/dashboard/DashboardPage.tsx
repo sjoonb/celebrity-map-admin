@@ -1,20 +1,22 @@
-import { CardBase } from '@/lib/components/atoms/CardBase';
-import { Flex } from '@/lib/components/atoms/Flex';
-import { modalPromise } from '@/lib/components/modal/modal-promise';
-import { RestaurantInfoPopup } from '@/lib/restaurant/RestaurantInfoPopup';
+import { CardBase } from '../components/atoms/CardBase';
+import { Flex } from '../components/atoms/Flex';
+import { modalPromise } from '../components/modal/modal-promise';
+import { RestaurantInfoPopup } from '../restaurant/RestaurantInfoPopup';
 import {
   RestaurantInfo,
   restaurantsInfoAtom,
-} from '@/lib/restaurant/restaurantInfo';
-import { RestaurantTable } from '@/lib/restaurant/RestaurantsInfoTable';
+} from '../restaurant/restaurantInfo';
+import { RestaurantTable } from '../restaurant/RestaurantsInfoTable';
 import { Button } from '@mantine/core';
-import { useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { HiPlus } from 'react-icons/hi';
-import { confirmPromise } from '@/lib/components/modal/confrim-promise';
+import { confirmPromise } from '../components/modal/confrim-promise';
+import { submitRestaurantsInfoAtom } from '../restaurant/restaurantsInfoAPI';
 
 export const DashboardPage = () => {
   const setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
+  const submitRestaurantsInfoToFireStoreDB = useSetAtom(submitRestaurantsInfoAtom);
 
   const handleAddData = useCallback(() => {
     modalPromise<RestaurantInfo>(RestaurantInfoPopup, {
@@ -34,11 +36,11 @@ export const DashboardPage = () => {
     })
       .then((isConfirmed) => {
         if (isConfirmed) {
-
+          submitRestaurantsInfoToFireStoreDB();
         }
       })
       .catch((error) => {});
-  }, []);
+  }, [submitRestaurantsInfoAtom]);
 
   return (
     <CardBase p="40px" mb="30px">

@@ -2,8 +2,8 @@ import { ActionIcon, TextInput } from '@mantine/core';
 import { MdOutlineLibraryAdd } from 'react-icons/md';
 import { useCallback, useState } from 'react';
 import { PropsOf } from '@emotion/react';
-import { Flex } from '@/lib/components/atoms/Flex';
-import { FlexInput } from '@/lib/components/form/FlexInput';
+import { Flex } from '../atoms/Flex';
+import { FlexInput } from './FlexInput';
 import { HiMinusCircle } from 'react-icons/hi';
 import { UseFormReturnType } from '@mantine/form';
 
