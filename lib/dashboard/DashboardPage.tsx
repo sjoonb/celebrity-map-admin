@@ -1,46 +1,41 @@
-import { CardBase } from '../components/atoms/CardBase';
-import { Flex } from '../components/atoms/Flex';
-import { modalPromise } from '../components/modal/modal-promise';
-import { RestaurantInfoPopup } from '../restaurant/RestaurantInfoPopup';
+import { CardBase } from '@/lib/components/atoms/CardBase';
+import { Flex } from '@/lib/components/atoms/Flex';
+import { modalPromise } from '@/lib/components/modal/modal-promise';
+import { RestaurantInfoPopup } from '@/lib/restaurant/RestaurantInfoPopup';
 import {
   RestaurantInfo,
-  restaurantsInfoAtom,
-} from '../restaurant/restaurantInfo';
-import { RestaurantTable } from '../restaurant/RestaurantsInfoTable';
+  restaurantsInfoReducer,
+} from '@/lib/restaurant/restaurantInfo';
+import { RestaurantTable } from '@/lib/restaurant/RestaurantsInfoTable';
 import { Button } from '@mantine/core';
 import { useAtom, useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { HiPlus } from 'react-icons/hi';
-import { confirmPromise } from '../components/modal/confrim-promise';
-import { submitRestaurantsInfoAtom } from '../restaurant/restaurantsInfoAPI';
+import { confirmPromise } from '@/lib/components/modal/confrim-promise';
 
 export const DashboardPage = () => {
-  const setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
-  const submitRestaurantsInfoToFireStoreDB = useSetAtom(submitRestaurantsInfoAtom);
+  const dispatch = useSetAtom(restaurantsInfoReducer);
 
   const handleAddData = useCallback(() => {
     modalPromise<RestaurantInfo>(RestaurantInfoPopup, {
       id: 'add-restaurant-data',
       title: '식당 데이터 추가',
     })
-      .then((value) => {
-        setRestaurantsInfo((prev) => [...prev, value]);
+      .then((restaurantInfo) => {
+        dispatch({ type: 'add', restaurantInfo });
       })
       .catch((error) => {});
   }, []);
 
   const handleSubmitAllData = useCallback(() => {
-    confirmPromise('모든 데이터를 제출합니다.', {
-      labels: { confirm: '확인', cancel: '취소' },
-      centered: true,
-    })
+    confirmPromise('모든 데이터를 제출합니다.')
       .then((isConfirmed) => {
         if (isConfirmed) {
-          submitRestaurantsInfoToFireStoreDB();
+          dispatch({ type: 'submit' });
         }
       })
       .catch((error) => {});
-  }, [submitRestaurantsInfoAtom]);
+  }, []);
 
   return (
     <CardBase p="40px" mb="30px">
@@ -50,7 +45,9 @@ export const DashboardPage = () => {
           <Button leftIcon={<HiPlus size={20} />} onClick={handleAddData}>
             식당 데이터 추가
           </Button>
-          <Button variant="outline" onClick={handleSubmitAllData}>제출</Button>
+          <Button variant="outline" onClick={handleSubmitAllData}>
+            제출
+          </Button>
         </Flex>
       </Flex>
     </CardBase>

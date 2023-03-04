@@ -1,11 +1,13 @@
-import { Flex } from '../components/atoms/Flex';
-import { CreatableMultiSelect } from '../components/form/CreatableMultiSelect';
-import { FlexInput } from '../components/form/FlexInput';
-import { ModalChildProps } from '../components/modal/modal-promise';
-import { channelIdMapping } from '../constant/channels';
-import { urlRegExp, doubleRegExp, intRegExp } from '../constant/regexp';
-import { RestaurantInfo as RestaurantInfo } from './restaurantInfo';
-import { NaverPlaceRestaurantInfoQuery } from '../urql/urqlClient';
+import { Flex } from '@/lib/components/atoms/Flex';
+import { CreatableMultiSelect } from '@/lib/components/form/CreatableMultiSelect';
+import { FlexInput } from '@/lib/components/form/FlexInput';
+import { ModalChildProps } from '@/lib/components/modal/modal-promise';
+import { urlRegExp, doubleRegExp, intRegExp } from '@/lib/constant/regexp';
+import {
+  channelIdMapping,
+  RestaurantInfo as RestaurantInfo,
+} from './restaurantInfo';
+import { NaverPlaceRestaurantInfoQuery } from '@/lib/urql/urqlClient';
 import {
   Button,
   NumberInput,
@@ -38,8 +40,8 @@ export const RestaurantInfoPopup = ({
       id: restaurantInfo?.id ?? uuid(),
       channelId: restaurantInfo?.channelId ?? '',
       youtubeLink: restaurantInfo?.youtubeLink ?? '',
-      videoStartMinute: restaurantInfo?.videoStartMinute ?? null,
-      videoStartSecond: restaurantInfo?.videoStartSecond ?? null,
+      videoStartMinute: restaurantInfo?.videoStartMinute ?? 0,
+      videoStartSecond: restaurantInfo?.videoStartSecond ?? 0,
       menus: restaurantInfo?.menus ?? [],
       naverId: restaurantInfo?.naverId ?? '',
       restaurantName: restaurantInfo?.restaurantName ?? '',
@@ -68,7 +70,7 @@ export const RestaurantInfoPopup = ({
     pause: true,
   });
 
-  const handleFetchDataFromnaverId = useCallback(() => {
+  const handleFetchDataFromNaverId = useCallback(() => {
     form.validateField('naverId');
     if (form.isValid('naverId')) {
       console.log('refetch!');
@@ -144,7 +146,7 @@ export const RestaurantInfoPopup = ({
             />
             <Button
               variant="light"
-              onClick={handleFetchDataFromnaverId}
+              onClick={handleFetchDataFromNaverId}
               loading={fetchedRestaurantInfo.fetching}
               loaderPosition="center"
             >

@@ -1,11 +1,8 @@
 import { x } from '@xstyled/emotion';
 import Link, { LinkProps } from 'next/link';
 import { useRouter } from 'next/router';
-import {
-  HiChevronDown,
-  HiOutlineLogout,
-} from 'react-icons/hi';
-import { ActionIcon, Avatar, Menu, MenuItemProps } from '@mantine/core';
+import { HiChevronDown, HiOutlineLogout } from 'react-icons/hi';
+import { ActionIcon, Avatar, Button, Menu, MenuItemProps } from '@mantine/core';
 import { Fragment, useCallback } from 'react';
 import { Flex } from '../components/atoms/Flex';
 
@@ -15,10 +12,10 @@ const HeaderLink = ({ children, ...props }: LinkProps & { children: any }) => {
   return (
     <Link passHref {...props}>
       <x.span
-        text="button-04-sb"
+        text={active ? 'button-04-sb' : 'button-04-r'}
         cursor="pointer"
         lineHeight={1}
-        color={active ? 'primary' : 'black'}
+        color={active ? 'primary' : 'gray'}
       >
         {children}
       </x.span>
@@ -43,11 +40,9 @@ export const AdminHeader = () => {
       alignItems="center"
       justifyContent="space-between"
     >
-      <Flex gap="28px" alignItems="center">
-        {/* <Flex mr="calc(55px - 28px)"> */}
-        {/* <Image src="/images/logo.png" width={46} height={34} alt="joy-logo" /> */}
-        {/* </Flex> */}
-        <HeaderLink href="/dashboard">대시보드</HeaderLink>
+      <Flex gap="32px" alignItems="center">
+        <HeaderLink href="/restaurant">식당관리</HeaderLink>
+        <HeaderLink href="/celebrity">유명인 관리</HeaderLink>
       </Flex>
       <Flex gap="28px" alignItems="center">
         <Menu>

@@ -8,7 +8,7 @@ export default function Home() {
   useEffect(() => {
     if (!isReady) return;
 
-    push('/dashboard');
+    push('/restaurant');
   }, [isReady]);
 
   return <LoadingOverlay visible />;

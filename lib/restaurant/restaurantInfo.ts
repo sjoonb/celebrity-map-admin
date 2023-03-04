@@ -1,12 +1,21 @@
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/utils/firebase';
 import { atom } from 'jotai';
 import { v4 as uuid } from 'uuid';
+
+export const naverMapPlaceUrl = 'https://pcmap.place.naver.com/restaurant/';
+
+export const channelIdMapping = new Map<string, string>([
+  ['poongja', '또간집'],
+  ['sungSiKyung', '성시경의 먹을텐데'],
+]);
 
 export interface RestaurantInfo {
   id: string;
   channelId: string;
   youtubeLink: string;
-  videoStartMinute: number | null;
-  videoStartSecond: number | null;
+  videoStartMinute: number;
+  videoStartSecond: number;
   menus: string[];
   naverId: string;
   restaurantName: string;
@@ -32,7 +41,7 @@ const sampleRestaurantInfoData: RestaurantInfo[] = [
   {
     id: '924715a4-c1e4-4d8a-b7a4-f872415a1cac',
 
-    channelId: 'sungsikyung',
+    channelId: 'sungSiKyung',
     youtubeLink: 'https://~',
     videoStartMinute: 10,
     videoStartSecond: 32,
@@ -58,7 +67,7 @@ const sampleRestaurantInfoData: RestaurantInfo[] = [
   },
 ];
 
-export const restaurantsInfoAtom = atom<RestaurantInfo[]>([]);
+const restaurantsInfoAtom = atom<RestaurantInfo[]>(sampleRestaurantInfoData);
 
 export const sortedRestaurantsInfoAtom = atom((get) => {
   const restaurantsInfo = get(restaurantsInfoAtom);
@@ -73,12 +82,16 @@ const serializedRestaurantsInfoKey = 'serializedRestaurantsInfo';
 export const restaurantsInfoReducer = atom<
   null,
   | { type: 'duplicate'; restaurantInfo: RestaurantInfo; index: number }
-  | { type: 'remove'; restaurantInfo: RestaurantInfo;}
+  | { type: 'remove'; restaurantInfo: RestaurantInfo }
+  | { type: 'add'; restaurantInfo: RestaurantInfo }
+  | { type: 'edit'; editedInfo: RestaurantInfo }
   | { type: 'serialize' }
   | { type: 'deserialize' }
+  | { type: 'submit' }
 >(null, (_get, set, action) => {
   if (action.type === 'duplicate') {
     const duplicatedInfo = { ...action.restaurantInfo };
+    console.log(duplicatedInfo);
     duplicatedInfo.id = uuid();
     const prev = _get(restaurantsInfoAtom);
 
@@ -89,10 +102,24 @@ export const restaurantsInfoReducer = atom<
     ]);
   } else if (action.type === 'remove') {
     const prev = _get(restaurantsInfoAtom);
-    
-    set(restaurantsInfoAtom, 
+
+    set(
+      restaurantsInfoAtom,
       prev.filter((info) => info !== action.restaurantInfo)
-     );
+    );
+  } else if (action.type === 'add') {
+    const prev = _get(restaurantsInfoAtom);
+
+    set(restaurantsInfoAtom, [...prev, action.restaurantInfo]);
+  } else if (action.type === 'edit') {
+    const prev = _get(restaurantsInfoAtom);
+
+    set(
+      restaurantsInfoAtom,
+      prev.map((info) =>
+        info.id !== action.editedInfo.id ? info : action.editedInfo
+      )
+    );
   } else if (action.type === 'serialize') {
     const restaurantsInfo = _get(restaurantsInfoAtom);
     const obj = {
@@ -107,34 +134,35 @@ export const restaurantsInfoReducer = atom<
     }
     const obj = JSON.parse(value);
     set(restaurantsInfoAtom, obj.restaurantsInfo);
+  } else if (action.type == 'submit') {
+    const restaurantsInfo = _get(restaurantsInfoAtom);
+
+    restaurantsInfo.forEach((info) => {
+      submitRestaurantInfo(info);
+    });
   }
 });
 
-// export const serializeRestaurantsInfoAtom = atom<
-//   null,
-//   | { type: 'duplicate'; restaurantInfo: RestaurantInfo; index: number }
-//   | { type: 'serialize'; callback: (value: string) => void }
-//   | { type: 'deserialize'; value: string }
-// >(null, (get, set, action) => {
-//   console.log('action: ', action.type);
-//   if (action.type === 'duplicate') {
-//     console.log('duplicate called');
-//     const duplicatedInfo = { ...action.restaurantInfo };
-//     duplicatedInfo.id = uuid();
-//     const prev = get(restaurantsInfoAtom);
-//     set(restaurantsInfoAtom, [
-//       ...prev.slice(0, action.index),
-//       duplicatedInfo,
-//       ...prev.slice(action.index),
-//     ]);
-//   } else if (action.type === 'serialize') {
-//     const restaurantsInfo = get(restaurantsInfoAtom);
-//     const obj = {
-//       restaurantsInfo,
-//     };
-//     action.callback(JSON.stringify(obj));
-//   } else if (action.type === 'deserialize') {
-//     const obj = JSON.parse(action.value);
-//     set(restaurantsInfoAtom, obj.restaurantsInfo);
-//   }
-// });
+const submitRestaurantInfo = async function (
+  info: RestaurantInfo
+): Promise<void> {
+  console.log(info.id);
+
+  setDoc(doc(db, 'dev-celebrities', info.channelId, 'coordinates', info.id), {
+    latitude: info.latitude,
+    longitude: info.longitude,
+  });
+
+  setDoc(doc(db, 'dev-celebrities', info.channelId, 'restaurants', info.id), {
+    channelName: channelIdMapping.get(info.channelId),
+    externalMapLink: {
+      type: 'NAVER',
+      url: naverMapPlaceUrl + info.naverId,
+    },
+    menus: info.menus,
+    phoneNumber: info.phoneNumber,
+    restaurantName: info.restaurantName,
+    startSeconds: info.videoStartMinute * 60 + info.videoStartSecond,
+    videoUrl: info.youtubeLink,
+  });
+};

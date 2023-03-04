@@ -5,21 +5,19 @@ import { MdEdit } from 'react-icons/md';
 import { AiFillCopy } from 'react-icons/ai';
 import { x } from '@xstyled/emotion';
 import { MouseEvent, useCallback, useEffect } from 'react';
-import { modalPromise } from '../components/modal/modal-promise';
+import { modalPromise } from '@/lib/components/modal/modal-promise';
 import { RestaurantInfoPopup } from './RestaurantInfoPopup';
 import { useAtom, useSetAtom } from 'jotai';
-import { confirmPromise } from '../components/modal/confrim-promise';
+import { confirmPromise } from '@/lib/components/modal/confrim-promise';
 import {
+  channelIdMapping,
+  naverMapPlaceUrl,
   RestaurantInfo,
-  restaurantsInfoAtom,
   restaurantsInfoReducer,
   sortedRestaurantsInfoAtom,
 } from './restaurantInfo';
-import { channelIdMapping } from '../constant/channels';
-import { naverMapPlaceUrl } from '../constant/constant';
 
 export const RestaurantTable = () => {
-  const setRestaurantsInfo = useSetAtom(restaurantsInfoAtom);
   const [sortedRestaurantsInfo] = useAtom(sortedRestaurantsInfoAtom);
   const dispatch = useSetAtom(restaurantsInfoReducer);
 
@@ -35,10 +33,7 @@ export const RestaurantTable = () => {
   }, [sortedRestaurantsInfo]);
 
   const handleDuplicateData = useCallback((restaurantInfo: RestaurantInfo) => {
-    confirmPromise('선택된 데이터를 복제합니다.', {
-      labels: { confirm: '확인', cancel: '취소' },
-      centered: true,
-    }).then((isConfirmed) => {
+    confirmPromise('선택된 데이터를 복제합니다.').then((isConfirmed) => {
       if (isConfirmed) {
         const index = sortedRestaurantsInfo.indexOf(restaurantInfo);
         dispatch({ type: 'duplicate', restaurantInfo, index });
@@ -47,10 +42,7 @@ export const RestaurantTable = () => {
   }, []);
 
   const handleRemoveData = useCallback((restaurantInfo: RestaurantInfo) => {
-    confirmPromise('선택된 데이터를 삭제합니다.', {
-      labels: { confirm: '확인', cancel: '취소' },
-      centered: true,
-    }).then((isConfirmed) => {
+    confirmPromise('선택된 데이터를 삭제합니다.').then((isConfirmed) => {
       if (isConfirmed) {
         dispatch({ type: 'remove', restaurantInfo });
       }
@@ -63,11 +55,7 @@ export const RestaurantTable = () => {
       title: '식당 데이터 수정',
       componentProps: { restaurantInfo: restaurantInfo },
     }).then((editedInfo) => {
-      setRestaurantsInfo((prev) => {
-        return prev.map((info) =>
-          info.id !== editedInfo.id ? info : editedInfo
-        );
-      });
+      dispatch({ type: 'edit', editedInfo });
     });
   }, []);
 
