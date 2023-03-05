@@ -1,15 +1,15 @@
-import { RestaurantPage } from '@/lib/restaurant/RestaurantPage';
+import { CelebrityPage } from '@/lib/celebrity/CelebrityPage';
 import { Provider } from 'jotai';
 import { AdminContent } from '../../lib/layout/AdminContent';
 
-const Restaurant = () => {
+const Celebrity = () => {
   return (
     <AdminContent>
       <Provider>
-        <RestaurantPage />
+        <CelebrityPage />
       </Provider>
     </AdminContent>
   );
 };
 
-export default Restaurant;
+export default Celebrity;

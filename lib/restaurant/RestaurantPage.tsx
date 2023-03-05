@@ -21,10 +21,9 @@ import { SearchTextInput } from '../components/search/SearchTextInput';
 import { RestaurantEntity } from '../openapi';
 import { restaurantsApi } from './restaurantsApi';
 
-export const RestaurantListPage = () => {
+export const RestaurantPage = () => {
   const { celebrities, celebrityId, setCelebrityId } = useCelebrity();
   const searchText = useAtomValue(searchTextAtom);
-  console.log('searchText: ', searchText);
   const { limit, page } = usePagingQueryValue();
   const { data, isLoading, refetch } = useQuery(
     ['restaurants', limit, page, celebrityId, searchText],
