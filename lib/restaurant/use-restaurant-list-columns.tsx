@@ -2,6 +2,7 @@ import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { useCallback } from 'react';
 import { buttonCell } from '@/lib/components/table/cell/button-cell';
 import { RestaurantEntity } from '../openapi';
+import dayjs from 'dayjs';
 
 const h = createColumnHelper<RestaurantEntity>();
 
@@ -18,6 +19,10 @@ export const useRestaurantListColumns = () => {
     h.accessor('restaurantName', { header: '식당 이름' }),
     h.accessor('youtubeVideoUrl', { header: '유튜브 링크' }),
     h.accessor('externalMapLink.value', { header: '네이버 링크' }),
+    h.accessor('updatedAt', {
+      header: '최종 수정 일자',
+      cell: ({ getValue }) => dayjs(getValue()).format('YYYY-MM-DD'),
+    }),
     h.display({
       header: '상세보기',
       cell: buttonCell('상세보기', { onClick: handleOpenDetail }),

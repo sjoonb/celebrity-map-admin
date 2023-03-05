@@ -9,6 +9,7 @@ models/CelebrityEntity.ts
 models/CreateCelebrityDto.ts
 models/CreateRestaurantDto.ts
 models/ExternalMapLinkEntity.ts
+models/GetRestaurantsResponse.ts
 models/ProfileEntity.ts
 models/RestaurantEntity.ts
 models/UpdateCelebrityDto.ts

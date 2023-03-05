@@ -16,12 +16,15 @@
 import * as runtime from '../runtime';
 import type {
   CreateRestaurantDto,
+  GetRestaurantsResponse,
   RestaurantEntity,
   UpdateRestaurantDto,
 } from '../models';
 import {
     CreateRestaurantDtoFromJSON,
     CreateRestaurantDtoToJSON,
+    GetRestaurantsResponseFromJSON,
+    GetRestaurantsResponseToJSON,
     RestaurantEntityFromJSON,
     RestaurantEntityToJSON,
     UpdateRestaurantDtoFromJSON,
@@ -40,6 +43,7 @@ export interface GetRestaurantsRequest {
     celebrityId?: number;
     page?: number;
     limit?: number;
+    restaurantName?: string;
 }
 
 export interface PatchResetaurantRequest {
@@ -126,7 +130,7 @@ export class RestaurantsApi extends runtime.BaseAPI {
     /**
      * 
      */
-    async getRestaurantsRaw(requestParameters: GetRestaurantsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<RestaurantEntity>>> {
+    async getRestaurantsRaw(requestParameters: GetRestaurantsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetRestaurantsResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters.celebrityId !== undefined) {
@@ -141,6 +145,10 @@ export class RestaurantsApi extends runtime.BaseAPI {
             queryParameters['limit'] = requestParameters.limit;
         }
 
+        if (requestParameters.restaurantName !== undefined) {
+            queryParameters['restaurantName'] = requestParameters.restaurantName;
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
@@ -150,13 +158,13 @@ export class RestaurantsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(RestaurantEntityFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetRestaurantsResponseFromJSON(jsonValue));
     }
 
     /**
      * 
      */
-    async getRestaurants(requestParameters: GetRestaurantsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<RestaurantEntity>> {
+    async getRestaurants(requestParameters: GetRestaurantsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetRestaurantsResponse> {
         const response = await this.getRestaurantsRaw(requestParameters, initOverrides);
         return await response.value();
     }
