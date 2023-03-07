@@ -1,3 +1,4 @@
+import { ProtectedRoute } from '@/lib/auth/ProtectedRoute';
 import { CelebrityPage } from '@/lib/celebrity/CelebrityPage';
 import { Provider } from 'jotai';
 import { AdminContent } from '../../lib/layout/AdminContent';

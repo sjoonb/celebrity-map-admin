@@ -11,6 +11,7 @@ export interface ButtonCellProps<C> extends Omit<ButtonProps, 'onClick'> {
 
 export const buttonCell =
   <C,>(children: React.ReactNode | string, props?: ButtonCellProps<C>) =>
+  // eslint-disable-next-line react/display-name
   (ctx: CellContext<C, any>) => {
     const { onClick, ...buttonProps } = props || {};
     return (

@@ -9,6 +9,8 @@ import { ModalsProvider } from '@mantine/modals';
 import { Provider as JotaiProvider } from 'jotai';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BaseAPI, Configuration } from '@/lib/openapi';
+import { useRouter } from 'next/router';
+import { NotificationsProvider } from '@mantine/notifications';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,20 +20,22 @@ const queryClient = new QueryClient({
   },
 });
 
-export const baseApi = new BaseAPI(
-  new Configuration({ basePath: process.env.NEXT_PUBLIC_BASE_API_PATH })
-);
-
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  const Layout = router.pathname === '/login' ? (p: any) => p : AdminLayout;
+
   return (
     <JotaiProvider>
       <QueryClientProvider client={queryClient}>
         <MantineProvider withNormalizeCSS withGlobalStyles>
           <ThemeProvider theme={theme}>
-            <ModalsProvider>
-              <GlobalStyle />
-              {AdminLayout(<Component {...pageProps} />)}
-            </ModalsProvider>
+            <NotificationsProvider>
+              <ModalsProvider>
+                <GlobalStyle />
+                {Layout(<Component {...pageProps} />)}
+              </ModalsProvider>
+            </NotificationsProvider>
           </ThemeProvider>
         </MantineProvider>
       </QueryClientProvider>

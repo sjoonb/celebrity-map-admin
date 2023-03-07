@@ -12,6 +12,7 @@ export interface IconCellProps<C> extends Omit<ActionIconProps, 'onClick'> {
 
 export const iconCell =
   <C,>(Icon: IconType | React.ReactNode, props?: IconCellProps<C>) =>
+  // eslint-disable-next-line react/display-name
   (ctx: CellContext<C, any>) => {
     const { onClick, ...actionIconProps } = props || {};
     return (

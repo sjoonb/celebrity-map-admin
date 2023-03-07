@@ -14,7 +14,6 @@ export const useCelebritiesColumns = () => {
   );
 
   return [
-    // h.display(tableCheckbox),
     h.display({ header: 'No.', cell: (ctx) => ctx.row.index + 1 }),
     h.accessor('celebrityName', { header: '유명인' }),
     h.accessor('channelName', { header: '채널명' }),
@@ -51,8 +50,6 @@ export const useCelebritiesColumns = () => {
         />
       ),
     }),
-    // h.accessor('youtubeVideoUrl', { header: '유튜브 링크' }),
-    // h.accessor('externalMapLink.value', { header: '네이버 링크' }),
     h.display({
       header: '상세보기',
       cell: buttonCell('상세보기', { onClick: handleOpenDetail }),

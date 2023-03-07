@@ -2,9 +2,11 @@ import { x } from '@xstyled/emotion';
 import Link, { LinkProps } from 'next/link';
 import { useRouter } from 'next/router';
 import { HiChevronDown, HiOutlineLogout } from 'react-icons/hi';
-import { ActionIcon, Avatar, Button, Menu, MenuItemProps } from '@mantine/core';
+import { Avatar, Menu, MenuItemProps } from '@mantine/core';
 import { Fragment, useCallback } from 'react';
 import { Flex } from '../components/atoms/Flex';
+import { useAuthStore } from '../auth/AuthStore';
+import { useProfileQuery } from '../auth/use-profile-query';
 
 const HeaderLink = ({ children, ...props }: LinkProps & { children: any }) => {
   const router = useRouter();
@@ -24,12 +26,14 @@ const HeaderLink = ({ children, ...props }: LinkProps & { children: any }) => {
 };
 
 export const AdminHeader = () => {
-  const router = useRouter();
+  const { data } = useProfileQuery();
+  const { setAcessToken } = useAuthStore();
+  const { push } = useRouter();
 
   const handleLogout = useCallback(() => {
-    // tutorAuthStore.clearStore();
-    // window.location.href = "/login";
-  }, []);
+    setAcessToken(null);
+    push('/login');
+  }, [push, setAcessToken]);
 
   return (
     <x.div
@@ -45,23 +49,23 @@ export const AdminHeader = () => {
         <HeaderLink href="/celebrity">유명인 관리</HeaderLink>
       </Flex>
       <Flex gap="28px" alignItems="center">
-        <Menu>
+        <Menu width={200}>
           <Menu.Target>
             <Flex gap="17px" alignItems="center" cursor="pointer">
-              <Avatar radius="xl" size={40}>
-                SJ
-              </Avatar>
-              <x.h4 text="button-04-sb">백성준</x.h4>
+              <Avatar radius="xl" size={40}></Avatar>
+              <x.h4 text="button-04-sb">{data?.username ?? '알 수 없음'}</x.h4>
               <HiChevronDown size={24} />
             </Flex>
           </Menu.Target>
-          <Menu.Dropdown sx={{ padding: '10px 0px' }}>
-            <MenuItem
+          <Menu.Dropdown sx={{ padding: '4px 2px' }}>
+            <Menu.Item
+              // h="50px"
               icon={<HiOutlineLogout size={18} color="red" />}
               sx={{ color: 'red' }}
+              onClick={handleLogout}
             >
-              <x.div onClick={handleLogout}>Log Out</x.div>
-            </MenuItem>
+              Log Out
+            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       </Flex>

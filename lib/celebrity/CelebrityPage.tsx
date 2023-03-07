@@ -1,23 +1,18 @@
 import { CardBase } from '@/lib/components/atoms/CardBase';
 import { Flex } from '@/lib/components/atoms/Flex';
 import { ReactTable } from '@/lib/components/table/render/ReactTable';
-import { useRestaurantListColumns } from '@/lib/restaurant/use-restaurant-list-columns';
-import { Button, Center, Loader, Select, Text, TextInput } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
+import { Button, Center, Loader } from '@mantine/core';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { x } from '@xstyled/emotion';
-import { useAtomValue } from 'jotai';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { HiPlus } from 'react-icons/hi';
 import { SimplePagination } from '../components/pagination/SimplePagination';
-import { CelebrityEntity, RestaurantEntity } from '../openapi';
-import { celebritiesApi } from './celebrityApi';
+import { CelebrityEntity } from '../openapi';
+import { useCelebrityQuery } from './celebrityApi';
 import { useCelebritiesColumns } from './use-celebrities-columns';
 
 export const CelebrityPage = () => {
-  const { data, isLoading, refetch } = useQuery(['celebrities'], async () =>
-    celebritiesApi.getCelebrities()
-  );
+  const { data, isLoading, refetch } = useCelebrityQuery();
 
   const table = useReactTable<CelebrityEntity>({
     data: useMemo(() => data ?? [], [data]),
@@ -67,5 +62,3 @@ export const CelebrityPage = () => {
     </x.div>
   );
 };
-
-// TODO: - restaurants 받아올 때, total count 도 받아와야 페이지네이션 제대로 구현할 수 있다.
