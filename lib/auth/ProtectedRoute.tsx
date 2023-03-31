@@ -3,10 +3,8 @@
 import { LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useProfileQuery } from './authApi';
 
 export const ProtectedRoute = ({ children }: any) => {
-  const { data } = useProfileQuery();
   const [loading, setLoading] = useState(true);
   //   const auth = useAuthStore();
   const router = useRouter();

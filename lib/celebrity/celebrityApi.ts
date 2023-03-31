@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { useAuthQuery } from '../auth/use-auth-query';
 import { Configuration, CelebritiesApi } from '../openapi';
 
 export const celebritiesApi = new CelebritiesApi(
@@ -9,11 +8,7 @@ export const celebritiesApi = new CelebritiesApi(
 
 export const useCelebrityQuery = () =>
   useQuery(['celebrities'], async (authHeader) =>
-    celebritiesApi.getCelebrities({
-      // headers: {
-      //   ...authHeader,
-      // },
-    })
+    celebritiesApi.getCelebrities()
   );
 
 export const useCelebrity = () => {

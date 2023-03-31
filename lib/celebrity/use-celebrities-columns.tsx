@@ -1,8 +1,7 @@
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { useCallback } from 'react';
 import { buttonCell } from '@/lib/components/table/cell/button-cell';
-import { CelebrityEntity, RestaurantEntity } from '../openapi';
-import dayjs from 'dayjs';
+import { CelebrityEntity } from '../openapi';
 import { Image } from '@mantine/core';
 
 const h = createColumnHelper<CelebrityEntity>();
