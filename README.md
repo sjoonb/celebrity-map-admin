@@ -1,3 +1,21 @@
+## Description
+
+iOS/Android 앱 서비스 '유명인 맛지도' 의 데이터 추가를 위한 어드민 페이지 입니다.
+아직 개발 진행중이며, 서버 어플리케이션과 함께 동작시켜야 합니다.
+
+## Preview
+
+### 로그인 페이지
+<img width="1840" alt="Screenshot 2023-03-31 at 1 03 31 PM" src="https://user-images.githubusercontent.com/70687318/229019970-46392a2e-a0cd-4d9e-adc1-ae35d93435a8.png">
+
+### 식당 관리 대시보드
+<img width="1840" alt="Screenshot 2023-03-31 at 1 05 47 PM" src="https://user-images.githubusercontent.com/70687318/229020198-d648c63a-9390-4dbf-8b87-b781c23b9a3c.png">
+
+### 유명인 관리 대시보드
+<img width="1840" alt="Screenshot 2023-03-31 at 1 03 47 PM" src="https://user-images.githubusercontent.com/70687318/229019994-eb548f45-2aa0-432d-a061-fac67c435b64.png">
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
